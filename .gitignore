@@ -1,0 +1,13 @@
+*[0-9].class
+*.class
+bin
+.idea
+doc
+project
+target
+tests
+out
+.settings
+.classpath
+.project
+nullnull
