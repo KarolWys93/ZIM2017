@@ -2,12 +2,13 @@ package KarolW.ZIM.MITFormatReader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
  * Created by Karol on 02-06-2017.
+ * @author Karol Wyskocki
  */
+
 public class Channel {
 
     private String filePath;
@@ -55,7 +56,7 @@ public class Channel {
                 }
             }
         }
-
+        fis.close();
         return rawData;
     }
 
