@@ -3,6 +3,8 @@ package KarolW.ZIM.MITFormatReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Karol on 02-06-2017.
@@ -37,16 +39,21 @@ public class Channel {
         int[] rawData = new int[length];
         File dataFile = new File(filePath);
         FileInputStream fis = new FileInputStream(dataFile);
+        FileChannel fchannel = fis.getChannel();
+        MappedByteBuffer fileMap = fchannel.map(FileChannel.MapMode.READ_ONLY, 0, fchannel.size());
 
 
 
         byte[] sample = new byte[2];
         int sampleNumber = 0;
-
         for (int i = 0; i < length * channelsInFile; i++) {
-            if(fis.read(sample) == -1){
+            if (!fileMap.hasRemaining()) {
                 break;
             }
+//            if(fis.read(sample) == -1){
+//                break;
+//            }
+            fileMap.get(sample);
             if ((i % channelsInFile) == byteOffset) {
 
                 if ((sample[1] & (0x80)) == 0x80) {
