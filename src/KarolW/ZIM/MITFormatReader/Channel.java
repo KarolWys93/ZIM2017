@@ -13,14 +13,14 @@ public class Channel {
 
     private String filePath;
     private String formatName;
-    private int gain;
+    private double gain;
     private int resolution;
     private String description;
     private int byteOffset;
     private int channelsInFile;
     private int length;
 
-    public Channel(String filePath, String formatName, int gain, int resolution,
+    public Channel(String filePath, String formatName, double gain, int resolution,
                    String description, int byteOffset, int channelsInFile, int length) {
         this.filePath = filePath;
         this.formatName = formatName;
@@ -78,7 +78,7 @@ public class Channel {
         return formatName;
     }
 
-    public int getGain() {
+    public double getGain() {
         return gain;
     }
 

@@ -14,6 +14,11 @@ public class SimpleDCfilter implements DigitalFilter {
     }
 
     @Override
+    public void resetFilter(){
+        state = 0;
+    }
+
+    @Override
     public double filter(double sample) {
         double y = sample - state;
         state = y * (1 - alpha) + state;

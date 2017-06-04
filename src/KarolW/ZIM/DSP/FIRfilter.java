@@ -3,14 +3,21 @@ package KarolW.ZIM.DSP;
 /**
  * Created by Karol on 03-06-2017.
  */
-public class FIRLowPassFilter implements DigitalFilter{
+public class FIRfilter implements DigitalFilter{
 
     private double bCoeffs[];
     private double state[];
 
-    public FIRLowPassFilter(double bCoeffs[]) {
+    public FIRfilter(double bCoeffs[]) {
         this.bCoeffs = bCoeffs;
         state = new double[bCoeffs.length-1];
+    }
+
+    @Override
+    public void resetFilter(){
+        for (int i = 0; i < state.length; i++) {
+            state[i] = 0;
+        }
     }
 
     @Override

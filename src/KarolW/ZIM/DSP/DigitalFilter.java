@@ -8,4 +8,6 @@ public interface DigitalFilter {
     public abstract double filter(double sample);
 
     public abstract double[] filter(double[] sample);
+
+    public abstract void resetFilter();
 }

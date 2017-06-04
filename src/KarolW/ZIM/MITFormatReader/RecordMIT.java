@@ -66,7 +66,7 @@ public class RecordMIT {
             channels[i] = new Channel(
                     headerFile.getParent() + File.separator + channelInfo[0],
                     channelInfo[1],
-                    Integer.parseInt(channelInfo[2]),
+                    Double.parseDouble(channelInfo[2]),
                     Integer.parseInt(channelInfo[3]),
                     desc.toString(),
                     offset++,
