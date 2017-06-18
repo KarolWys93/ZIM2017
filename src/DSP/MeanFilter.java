@@ -1,4 +1,4 @@
-package KarolW.ZIM.DSP;
+package DSP;
 
 /**
  * Created by Karol on 04-06-2017.

@@ -1,4 +1,4 @@
-package KarolW.ZIM.MITFormatReader;
+package MITFormatReader;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,7 +1,7 @@
-package KarolW.ZIM.QRSdetect;
+package QRSdetect;
 
 
-import KarolW.ZIM.DSP.MeanFilter;
+import DSP.MeanFilter;
 
 import java.util.HashSet;
 import java.util.Set;
