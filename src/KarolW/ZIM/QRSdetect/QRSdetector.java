@@ -14,15 +14,47 @@ public class QRSdetector {
 
     private double decisionThreshold;
     private int samplingFreq;
+    private int[] qrsMarkers;
 
 
     public QRSdetector(int samplingFreq, double decisionThreshold) {
         this.samplingFreq = samplingFreq;
         this.decisionThreshold = decisionThreshold;
+        qrsMarkers = null;
     }
 
     public int[] detectQRS(double[] data){
-        return decisionFunction(detectFunction(data));
+        qrsMarkers = decisionFunction(detectFunction(data));
+        return qrsMarkers;
+    }
+
+    public int getHeartRate(int fromSample, int toSample){
+        if(qrsMarkers == null) {
+            return -1;
+        }
+        if (fromSample > toSample){
+            throw new IllegalArgumentException(fromSample + " > " + toSample);
+        }
+
+        if(toSample > qrsMarkers.length){
+            toSample = qrsMarkers.length;
+        }
+
+
+        int lastMarkerIndex = 0;
+        double numOfMarkers = 0;
+        double intervalSum = 0;
+
+        for(int i = fromSample; i < toSample; i++){
+            if(qrsMarkers[i] != 0){
+                intervalSum += i-lastMarkerIndex;
+                lastMarkerIndex = i;
+                numOfMarkers++;
+            }
+        }
+
+        double hrRate = ((intervalSum/numOfMarkers)*60)/samplingFreq;
+        return (int) hrRate;
     }
 
     private int [] decisionFunction(double[] data){
@@ -159,4 +191,3 @@ public class QRSdetector {
         this.samplingFreq = samplingFreq;
     }
 }
-
