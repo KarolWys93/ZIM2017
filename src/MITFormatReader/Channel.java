@@ -50,9 +50,6 @@ public class Channel {
             if (!fileMap.hasRemaining()) {
                 break;
             }
-//            if(fis.read(sample) == -1){
-//                break;
-//            }
             fileMap.get(sample);
             if ((i % channelsInFile) == byteOffset) {
 
