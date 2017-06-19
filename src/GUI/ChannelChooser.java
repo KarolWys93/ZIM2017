@@ -5,6 +5,7 @@ import MITFormatReader.RecordMIT;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,9 +23,12 @@ public class ChannelChooser extends JDialog {
     private ButtonGroup channelsButtonGroup;
     private JRadioButton[] channels;
     private RecordMIT record;
+    private Channel choosedCahnnel;
 
     public ChannelChooser(RecordMIT record, String title) {
         this.record = record;
+        choosedCahnnel = null;
+
         setTitle(title);
         $$$setupUI$$$();
         setContentPane(contentPane);
@@ -64,10 +68,32 @@ public class ChannelChooser extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         pack();
+
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = kit.getScreenSize();
+        setBounds((screenSize.width / 2) - (getWidth() / 2), (screenSize.height / 2) - (getHeight() / 2), getWidth(), getHeight());
+
+    }
+
+    public Channel getSelectedChannel() {
+        return choosedCahnnel;
     }
 
     private void onOK() {
-        dispose();
+        int selected = -1;
+
+        for (int i = 0; i < channels.length; i++) {
+            if (channels[i].isSelected()) {
+                selected = i;
+                break;
+            }
+        }
+        if (selected > -1) {
+            choosedCahnnel = record.getChannels()[selected];
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "You must select channel.", "Channel selection", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void onCancel() {
@@ -80,7 +106,8 @@ public class ChannelChooser extends JDialog {
         channelsPanel = new JPanel();
         channelsPanel.setLayout(new GridLayoutManager(channels.length + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
         for (int i = 0; i < channels.length; i++) {
-            channelsPanel.add(createChannelButton(record.getChannels()[i]), new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            channels[i] = createChannelButton(record.getChannels()[i]);
+            channelsPanel.add(channels[i], new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         }
         final Spacer spacer2 = new Spacer();
         channelsPanel.add(spacer2, new GridConstraints(channels.length, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));

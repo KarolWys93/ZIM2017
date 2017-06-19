@@ -1,5 +1,6 @@
 package GUI;
 
+import MITFormatReader.Channel;
 import MITFormatReader.RecordMIT;
 import QRSdetect.QRSdetector;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -28,14 +29,17 @@ public class MainWindow extends JFrame {
     private JLabel recordChannelsNumLbl;
     private JLabel recordLengthLbl;
     private JLabel recordSampleFrqLbl;
-    private JLabel channelNumLbl;
     private JLabel channelDescLbl;
     private JLabel channelGarinLbl;
     private JLabel channelResLbl;
     private JPanel mainPanel;
 
     private JFileChooser fileChooser;
+    private ExpandedRecordInfo expandInfo;
+
+
     private RecordMIT ecgRecord;
+    private Channel ecgChannel;
 
     public MainWindow(String title) {
         super(title);
@@ -50,9 +54,17 @@ public class MainWindow extends JFrame {
                 chooseRecordFile();
             }
         });
+        moreInfoBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (expandInfo != null) {
+                    expandInfo.setVisible(true);
+                }
+            }
+        });
     }
 
-    void chooseRecordFile() {
+    private void chooseRecordFile() {
         FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("ECG record header (*.hea)", "hea");
         fileChooser.setFileFilter(fileFilter);
         int result = fileChooser.showOpenDialog(mainPanel);
@@ -68,7 +80,25 @@ public class MainWindow extends JFrame {
             ChannelChooser channelChooser = new ChannelChooser(ecgRecord, "Channel selection");
             channelChooser.setVisible(true);
 
+
+            if (channelChooser.getSelectedChannel() != null) {
+                ecgChannel = channelChooser.getSelectedChannel();
+                setInfo(ecgRecord, ecgChannel);
+                expandInfo = new ExpandedRecordInfo(ecgRecord, ecgChannel, "Record info");
+            }
+
         }
+    }
+
+    private void setInfo(RecordMIT record, Channel channel) {
+        recordNameLbl.setText(record.getRecordName());
+        recordSampleFrqLbl.setText(record.getSamplingFrequency() + " Hz");
+        recordChannelsNumLbl.setText(record.getChannels().length + "");
+        recordLengthLbl.setText(record.getNumberOfSample() / record.getSamplingFrequency() + " s");
+        channelDescLbl.setText(channel.getDescription());
+        channelGarinLbl.setText(channel.getGain() + "");
+        channelResLbl.setText(channel.getResolution() + "");
+
     }
 
     /**
@@ -82,7 +112,7 @@ public class MainWindow extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 5, 0, 5), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 5, 0, 5), -1, -1));
         mainPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
@@ -131,33 +161,27 @@ public class MainWindow extends JFrame {
         recordSampleFrqLbl.setText("");
         panel4.add(recordSampleFrqLbl, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel5.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel3.add(panel5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Chanel info:"));
         final JLabel label5 = new JLabel();
-        label5.setText("Chanel #: ");
+        label5.setText("Description:");
         panel5.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
-        label6.setText("Description:");
+        label6.setText("Resolution: ");
         panel5.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
-        label7.setText("Resolution: ");
+        label7.setText("Gain:");
         panel5.add(label7, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label8 = new JLabel();
-        label8.setText("Gain:");
-        panel5.add(label8, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        channelNumLbl = new JLabel();
-        channelNumLbl.setText("");
-        panel5.add(channelNumLbl, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         channelDescLbl = new JLabel();
         channelDescLbl.setText("");
-        panel5.add(channelDescLbl, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel5.add(channelDescLbl, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         channelResLbl = new JLabel();
         channelResLbl.setText("");
-        panel5.add(channelResLbl, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel5.add(channelResLbl, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         channelGarinLbl = new JLabel();
         channelGarinLbl.setText("");
-        panel5.add(channelGarinLbl, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel5.add(channelGarinLbl, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         moreInfoBtn = new JButton();
         moreInfoBtn.setText("More");
         panel3.add(moreInfoBtn, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
