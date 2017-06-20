@@ -89,7 +89,7 @@ public class QRSdetector {
     }
 
     private double[] detectFunction(double[] data){
-        MeanFilter meanFilter = new MeanFilter(samplingFreq > 100 ? samplingFreq/5 : 8);
+        MeanFilter meanFilter = new MeanFilter(20);//(samplingFreq > 100 ? samplingFreq/5 : 8);
 
         double [] detectFcnData = derivative(data);
 
