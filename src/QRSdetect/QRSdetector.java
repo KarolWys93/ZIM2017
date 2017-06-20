@@ -3,6 +3,7 @@ package QRSdetect;
 
 import DSP.MeanFilter;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,26 @@ public class QRSdetector {
 
     public int[] detectQRS(double[] data){
         qrsMarkers = decisionFunction(detectFunction(data));
+        return qrsMarkers;
+    }
+
+    public int[] detectQRS(double[] data, int fromSample, int toSample){
+
+        if (fromSample > toSample){
+            throw new IllegalArgumentException(fromSample + " > " + toSample);
+        }
+
+        if(toSample > data.length){
+            toSample = data.length;
+        }
+
+        qrsMarkers = new int[data.length];
+        int []tmpMarkers = decisionFunction(detectFunction(Arrays.copyOfRange(data, fromSample, toSample)));
+
+        for (int i = 0; i < tmpMarkers.length; i++) {
+            qrsMarkers[i+fromSample] = tmpMarkers[i];
+        }
+
         return qrsMarkers;
     }
 

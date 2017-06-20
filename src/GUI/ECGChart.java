@@ -67,6 +67,8 @@ public class ECGChart {
 
     public void setQRSMarkers(int[] qrsDetSamples, int samplingFrequency){
 
+        plot.clearDomainMarkers();
+
         for (int i = 0; i < qrsDetSamples.length; i++) {
             if(qrsDetSamples[i] > 0){
                 Marker marker = new ValueMarker(i/(double)samplingFrequency);
