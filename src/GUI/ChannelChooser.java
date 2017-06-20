@@ -5,7 +5,6 @@ import MITFormatReader.RecordMIT;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,11 +22,13 @@ public class ChannelChooser extends JDialog {
     private ButtonGroup channelsButtonGroup;
     private JRadioButton[] channels;
     private RecordMIT record;
-    private Channel choosedCahnnel;
+    private Channel choosedChannel;
+
+    private boolean clickOK = false;
 
     public ChannelChooser(RecordMIT record, String title) {
         this.record = record;
-        choosedCahnnel = null;
+        choosedChannel = null;
 
         setTitle(title);
         $$$setupUI$$$();
@@ -76,7 +77,12 @@ public class ChannelChooser extends JDialog {
     }
 
     public Channel getSelectedChannel() {
-        return choosedCahnnel;
+        return choosedChannel;
+    }
+
+    public boolean showDialog() {
+        setVisible(true);
+        return clickOK;
     }
 
     private void onOK() {
@@ -89,7 +95,8 @@ public class ChannelChooser extends JDialog {
             }
         }
         if (selected > -1) {
-            choosedCahnnel = record.getChannels()[selected];
+            choosedChannel = record.getChannels()[selected];
+            clickOK = true;
             dispose();
         } else {
             JOptionPane.showMessageDialog(null, "You must select channel.", "Channel selection", JOptionPane.INFORMATION_MESSAGE);
@@ -97,6 +104,7 @@ public class ChannelChooser extends JDialog {
     }
 
     private void onCancel() {
+        clickOK = false;
         dispose();
     }
 

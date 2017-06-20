@@ -30,6 +30,7 @@
                 </constraints>
                 <properties>
                   <text value="Load"/>
+                  <toolTipText value="Load ECG record"/>
                 </properties>
               </component>
               <component id="de798" class="javax.swing.JButton" binding="analisisBtn">
@@ -38,6 +39,7 @@
                 </constraints>
                 <properties>
                   <text value="Analisis"/>
+                  <toolTipText value="QRS detection analisis"/>
                 </properties>
               </component>
               <component id="5f49d" class="javax.swing.JButton" binding="saveBtn">
@@ -46,6 +48,7 @@
                 </constraints>
                 <properties>
                   <text value="Save"/>
+                  <toolTipText value="Save results"/>
                 </properties>
               </component>
               <component id="8b78b" class="javax.swing.JButton" binding="dspBtn">
@@ -54,6 +57,7 @@
                 </constraints>
                 <properties>
                   <text value="DSP"/>
+                  <toolTipText value="Signal processing functions"/>
                 </properties>
               </component>
             </children>
@@ -73,7 +77,9 @@
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="Record file information"/>
+                </properties>
                 <border type="etched" title="Record info:"/>
                 <children>
                   <component id="2c12d" class="javax.swing.JLabel">
@@ -147,7 +153,9 @@
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="Selected channel information"/>
+                </properties>
                 <border type="etched" title="Chanel info:"/>
                 <children>
                   <component id="7d00f" class="javax.swing.JLabel">
@@ -206,6 +214,7 @@
                 </constraints>
                 <properties>
                   <text value="More"/>
+                  <toolTipText value="Show more info"/>
                 </properties>
               </component>
             </children>
