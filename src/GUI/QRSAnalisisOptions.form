@@ -118,7 +118,7 @@
                             </constraints>
                             <properties>
                               <enabled value="true"/>
-                              <text value="From: "/>
+                              <text value="From: [s]"/>
                             </properties>
                           </component>
                           <component id="80697" class="javax.swing.JSpinner" binding="fromSpinner">
@@ -135,7 +135,7 @@
                             </constraints>
                             <properties>
                               <enabled value="true"/>
-                              <text value="To: "/>
+                              <text value="To: [s]"/>
                             </properties>
                           </component>
                           <component id="508fa" class="javax.swing.JSpinner" binding="toSpinner">

@@ -6,13 +6,17 @@ import MITFormatReader.RecordMIT;
 import QRSdetect.QRSdetector;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ public class MainWindow extends JFrame {
     private JLabel channelResLbl;
     private JPanel mainPanel;
     private JPanel ecgPanel;
+    private JTextField hrValueFileld;
 
     private ECGChart ecgChart;
 
@@ -77,16 +82,7 @@ public class MainWindow extends JFrame {
         analisisBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (analisisOptions.showDialog()) {
-                    qrsDetector = analisisOptions.getQRSDetector();
-
-                    int min = analisisOptions.getFromSampleNum();
-                    int max = analisisOptions.getToSampleNum();
-                    System.out.println("From: " + min + " To: " + max);
-                    int[] qrsData = qrsDetector.detectQRS(ecgData, min, max);
-                    ecgChart.setQRSMarkers(qrsData, ecgRecord.getSamplingFrequency());
-                }
+                analise();
             }
         });
         dspBtn.addActionListener(new ActionListener() {
@@ -143,6 +139,18 @@ public class MainWindow extends JFrame {
 
     }
 
+    private void analise() {
+        if (analisisOptions.showDialog()) {
+            qrsDetector = analisisOptions.getQRSDetector();
+
+            int min = analisisOptions.getFromSampleNum();
+            int max = analisisOptions.getToSampleNum();
+            int[] qrsData = qrsDetector.detectQRS(ecgData, min, max);
+            ecgChart.setQRSMarkers(qrsData, ecgRecord.getSamplingFrequency());
+            readHeartRate(min, max);
+        }
+    }
+
     private void setInfo(RecordMIT record, Channel channel) {
         recordNameLbl.setText(record.getRecordName());
         recordSampleFrqLbl.setText(record.getSamplingFrequency() + " Hz");
@@ -154,8 +162,8 @@ public class MainWindow extends JFrame {
 
     }
 
-    private void repaintECGChart() {
-
+    private void readHeartRate(int from, int to) {
+        hrValueFileld.setText(qrsDetector.getHeartRate(from, to) + " BPM");
     }
 
     private void createUIComponents() {
@@ -269,9 +277,23 @@ public class MainWindow extends JFrame {
         moreInfoBtn.setToolTipText("Show more info");
         panel3.add(moreInfoBtn, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel6.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         mainPanel.add(panel6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         panel6.add(ecgPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel6.add(panel7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel7.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Heart rate"));
+        hrValueFileld = new JTextField();
+        hrValueFileld.setColumns(5);
+        hrValueFileld.setEditable(false);
+        hrValueFileld.setEnabled(true);
+        hrValueFileld.setFont(new Font(hrValueFileld.getFont().getName(), hrValueFileld.getFont().getStyle(), 16));
+        hrValueFileld.setHorizontalAlignment(0);
+        hrValueFileld.setText("0 BPM");
+        panel7.add(hrValueFileld, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel7.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**
