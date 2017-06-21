@@ -33,8 +33,8 @@ public class QRSAnalisisOptions extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonStart);
 
-        fromSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, (double) ((dataLength - 1) / sampleFreq), 0.001));
-        toSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, (double) ((dataLength - 1) / sampleFreq), 0.001));
+        fromSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, (double) ((dataLength - 1.0) / sampleFreq), 0.001));
+        toSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, (double) ((dataLength - 1.0) / sampleFreq), 0.001));
         thresholdSpinner.setModel(new SpinnerNumberModel(0.015, 0.0, 1.0, 0.001));
 
         buttonStart.addActionListener(new ActionListener() {

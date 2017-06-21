@@ -17,8 +17,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +57,7 @@ public class MainWindow extends JFrame {
     private QRSdetector qrsDetector;
 
     private double[] ecgData;
+    private int[] qrsData;
 
     public MainWindow(String title) {
         super(title);
@@ -91,6 +94,12 @@ public class MainWindow extends JFrame {
                 filterSignal();
             }
         });
+        saveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveFile(ecgRecord, ecgData, qrsData);
+            }
+        });
     }
 
     private void chooseRecordFile() {
@@ -99,7 +108,6 @@ public class MainWindow extends JFrame {
         int result = fileChooser.showOpenDialog(mainPanel);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            System.out.println(fileChooser.getSelectedFile().getAbsolutePath());
             try {
                 ecgRecord = new RecordMIT(fileChooser.getSelectedFile().getAbsolutePath());
             } catch (FileNotFoundException e1) {
@@ -109,7 +117,7 @@ public class MainWindow extends JFrame {
             ChannelChooser channelChooser = new ChannelChooser(ecgRecord, "Channel selection");
 
 
-            if (channelChooser.showDialog()) {//channelChooser.getSelectedChannel() != null) {
+            if (channelChooser.showDialog()) {
                 ecgChannel = channelChooser.getSelectedChannel();
                 setInfo(ecgRecord, ecgChannel);
                 expandInfo = new ExpandedRecordInfo(ecgRecord, ecgChannel, "Record info");
@@ -145,9 +153,46 @@ public class MainWindow extends JFrame {
 
             int min = analisisOptions.getFromSampleNum();
             int max = analisisOptions.getToSampleNum();
-            int[] qrsData = qrsDetector.detectQRS(ecgData, min, max);
+            qrsData = qrsDetector.detectQRS(ecgData, min, max);
             ecgChart.setQRSMarkers(qrsData, ecgRecord.getSamplingFrequency());
             readHeartRate(min, max);
+        }
+    }
+
+    private void saveFile(RecordMIT record, double[] data, int[] markers) {
+        FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("CSV file (*.csv)", "csv");
+        fileChooser.setFileFilter(fileFilter);
+        fileChooser.setFileFilter(fileFilter);
+        fileChooser.setSelectedFile(new File(record.getFilePath()));
+        int result = fileChooser.showSaveDialog(mainPanel);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            if (fileToSave.exists()) {
+                int selection = JOptionPane.showConfirmDialog(
+                        null,
+                        "File exist. You want overwrite file?",
+                        "Confirm overwrite.",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+                if (selection == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+            PrintWriter fOut = null;
+            try {
+                fOut = new PrintWriter(fileToSave);
+
+                for (int i = 0; i < data.length; i++) {
+                    fOut.println(((double) i / (double) record.getSamplingFrequency()) + ", " + data[i] + ", " + markers[i]);
+                }
+
+                fOut.flush();
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "Can't write to file!", "File error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                fOut.close();
+            }
         }
     }
 
@@ -281,9 +326,9 @@ public class MainWindow extends JFrame {
         mainPanel.add(panel6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         panel6.add(ecgPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel6.add(panel7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        panel7.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Heart rate"));
+        panel7.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel6.add(panel7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel7.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
         hrValueFileld = new JTextField();
         hrValueFileld.setColumns(5);
         hrValueFileld.setEditable(false);
@@ -291,9 +336,12 @@ public class MainWindow extends JFrame {
         hrValueFileld.setFont(new Font(hrValueFileld.getFont().getName(), hrValueFileld.getFont().getStyle(), 16));
         hrValueFileld.setHorizontalAlignment(0);
         hrValueFileld.setText("0 BPM");
-        panel7.add(hrValueFileld, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel7.add(hrValueFileld, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel7.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel7.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JLabel label8 = new JLabel();
+        label8.setText("Heart rate: ");
+        panel7.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

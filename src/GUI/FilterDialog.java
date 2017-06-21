@@ -169,7 +169,7 @@ public class FilterDialog extends JDialog {
         panel6.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel5.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         dcFilterTBtn = new JToggleButton();
-        dcFilterTBtn.setIcon(new ImageIcon(getClass().getResource("/Images/low-pass.png")));
+        dcFilterTBtn.setIcon(new ImageIcon(getClass().getResource("/Images/dc-filter.png")));
         dcFilterTBtn.setText("");
         panel6.add(dcFilterTBtn, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
