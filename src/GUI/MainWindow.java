@@ -97,7 +97,9 @@ public class MainWindow extends JFrame {
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveFile(ecgRecord, ecgData, qrsData);
+                if (ecgRecord != null && ecgData != null && qrsData != null) {
+                    saveFile(ecgRecord, ecgData, qrsData);
+                }
             }
         });
     }
@@ -126,36 +128,40 @@ public class MainWindow extends JFrame {
                     ecgData = ecgChannel.getData();
                     ecgChart.setData(ecgData, ecgRecord.getSamplingFrequency());
                     analisisOptions = new QRSAnalisisOptions(ecgRecord);
+                    qrsData = null;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Can't read data!", "File error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
     }
 
     private void filterSignal() {
-        FilterDialog filterDialog = new FilterDialog(ecgRecord.getSamplingFrequency());
+        if (ecgRecord != null && ecgData != null) {
+            FilterDialog filterDialog = new FilterDialog(ecgRecord.getSamplingFrequency());
 
-        if (filterDialog.showDialog()) {
-            ArrayList<DigitalFilter> filters = filterDialog.getSelectedFilters();
-            for (DigitalFilter filter : filters) {
-                ecgData = filter.filter(ecgData);
+            if (filterDialog.showDialog()) {
+                ArrayList<DigitalFilter> filters = filterDialog.getSelectedFilters();
+                for (DigitalFilter filter : filters) {
+                    ecgData = filter.filter(ecgData);
+                }
+                ecgChart.setData(ecgData, ecgRecord.getSamplingFrequency());
+                analisisOptions = new QRSAnalisisOptions(ecgRecord);
             }
-            ecgChart.setData(ecgData, ecgRecord.getSamplingFrequency());
-            analisisOptions = new QRSAnalisisOptions(ecgRecord);
         }
-
     }
 
     private void analise() {
-        if (analisisOptions.showDialog()) {
-            qrsDetector = analisisOptions.getQRSDetector();
+        if (analisisOptions != null) {
+            if (analisisOptions.showDialog()) {
+                qrsDetector = analisisOptions.getQRSDetector();
 
-            int min = analisisOptions.getFromSampleNum();
-            int max = analisisOptions.getToSampleNum();
-            qrsData = qrsDetector.detectQRS(ecgData, min, max);
-            ecgChart.setQRSMarkers(qrsData, ecgRecord.getSamplingFrequency());
-            readHeartRate(min, max);
+                int min = analisisOptions.getFromSampleNum();
+                int max = analisisOptions.getToSampleNum();
+                qrsData = qrsDetector.detectQRS(ecgData, min, max);
+                ecgChart.setQRSMarkers(qrsData, ecgRecord.getSamplingFrequency());
+                readHeartRate(min, max);
+            }
         }
     }
 
@@ -182,7 +188,6 @@ public class MainWindow extends JFrame {
             PrintWriter fOut = null;
             try {
                 fOut = new PrintWriter(fileToSave);
-                fOut.println(record.getRecordName());
                 for (int i = 0; i < data.length; i++) {
                     fOut.println(((double) i / (double) record.getSamplingFrequency()) + ", " + data[i] + ", " + markers[i]);
                 }
