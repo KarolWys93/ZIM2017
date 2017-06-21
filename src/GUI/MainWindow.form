@@ -29,7 +29,8 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Load"/>
+                  <icon value="Images/file-48px.png"/>
+                  <text value=""/>
                   <toolTipText value="Load ECG record"/>
                 </properties>
               </component>
@@ -38,7 +39,8 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Analisis"/>
+                  <icon value="Images/analysis-48px.png"/>
+                  <text value=""/>
                   <toolTipText value="QRS detection analisis"/>
                 </properties>
               </component>
@@ -47,7 +49,8 @@
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Save"/>
+                  <icon value="Images/save-48px.png"/>
+                  <text value=""/>
                   <toolTipText value="Save results"/>
                 </properties>
               </component>
@@ -56,7 +59,8 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="DSP"/>
+                  <icon value="Images/dsp-48px.png"/>
+                  <text value=""/>
                   <toolTipText value="Signal processing functions"/>
                 </properties>
               </component>
@@ -213,7 +217,8 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="More"/>
+                  <icon value="Images/info-48px.png"/>
+                  <text value=""/>
                   <toolTipText value="Show more info"/>
                 </properties>
               </component>

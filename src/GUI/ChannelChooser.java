@@ -68,6 +68,7 @@ public class ChannelChooser extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/icon-128px.png")));
         pack();
 
         Toolkit kit = Toolkit.getDefaultToolkit();

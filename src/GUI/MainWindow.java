@@ -1,5 +1,6 @@
 package GUI;
 
+import DSP.DigitalFilter;
 import MITFormatReader.Channel;
 import MITFormatReader.RecordMIT;
 import QRSdetect.QRSdetector;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Karol on 18-06-2017.
@@ -51,6 +53,7 @@ public class MainWindow extends JFrame {
 
     public MainWindow(String title) {
         super(title);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/icon-128px.png")));
         $$$setupUI$$$();
         getContentPane().add(mainPanel);
 
@@ -86,6 +89,12 @@ public class MainWindow extends JFrame {
                 }
             }
         });
+        dspBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filterSignal();
+            }
+        });
     }
 
     private void chooseRecordFile() {
@@ -116,10 +125,22 @@ public class MainWindow extends JFrame {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
-
         }
+    }
+
+    private void filterSignal() {
+        FilterDialog filterDialog = new FilterDialog(ecgRecord.getSamplingFrequency());
+
+        if (filterDialog.showDialog()) {
+            ArrayList<DigitalFilter> filters = filterDialog.getSelectedFilters();
+            for (DigitalFilter filter : filters) {
+                ecgData = filter.filter(ecgData);
+            }
+            ecgChart.setData(ecgData, ecgRecord.getSamplingFrequency());
+            analisisOptions = new QRSAnalisisOptions(ecgRecord);
+        }
+
     }
 
     private void setInfo(RecordMIT record, Channel channel) {
@@ -168,19 +189,23 @@ public class MainWindow extends JFrame {
         panel2.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
         panel1.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         loadRecordBtn = new JButton();
-        loadRecordBtn.setText("Load");
+        loadRecordBtn.setIcon(new ImageIcon(getClass().getResource("/Images/file-48px.png")));
+        loadRecordBtn.setText("");
         loadRecordBtn.setToolTipText("Load ECG record");
         panel2.add(loadRecordBtn, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         analisisBtn = new JButton();
-        analisisBtn.setText("Analisis");
+        analisisBtn.setIcon(new ImageIcon(getClass().getResource("/Images/analysis-48px.png")));
+        analisisBtn.setText("");
         analisisBtn.setToolTipText("QRS detection analisis");
         panel2.add(analisisBtn, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveBtn = new JButton();
-        saveBtn.setText("Save");
+        saveBtn.setIcon(new ImageIcon(getClass().getResource("/Images/save-48px.png")));
+        saveBtn.setText("");
         saveBtn.setToolTipText("Save results");
         panel2.add(saveBtn, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         dspBtn = new JButton();
-        dspBtn.setText("DSP");
+        dspBtn.setIcon(new ImageIcon(getClass().getResource("/Images/dsp-48px.png")));
+        dspBtn.setText("");
         dspBtn.setToolTipText("Signal processing functions");
         panel2.add(dspBtn, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
@@ -239,7 +264,8 @@ public class MainWindow extends JFrame {
         channelGarinLbl.setText("");
         panel5.add(channelGarinLbl, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         moreInfoBtn = new JButton();
-        moreInfoBtn.setText("More");
+        moreInfoBtn.setIcon(new ImageIcon(getClass().getResource("/Images/info-48px.png")));
+        moreInfoBtn.setText("");
         moreInfoBtn.setToolTipText("Show more info");
         panel3.add(moreInfoBtn, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();

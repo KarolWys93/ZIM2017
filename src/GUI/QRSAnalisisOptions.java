@@ -78,7 +78,7 @@ public class QRSAnalisisOptions extends JDialog {
             }
         });
 
-
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/icon-128px.png")));
         pack();
 
         Toolkit kit = Toolkit.getDefaultToolkit();

@@ -71,6 +71,7 @@ public class ExpandedRecordInfo extends JDialog {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
         int height = 800;
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/icon-128px.png")));
         pack();
         setBounds((screenSize.width / 2) - (getWidth() / 2), (screenSize.height / 2) - (height / 2), getWidth(), height);
 
