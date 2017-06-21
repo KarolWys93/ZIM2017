@@ -163,7 +163,7 @@ public class MainWindow extends JFrame {
         FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("CSV file (*.csv)", "csv");
         fileChooser.setFileFilter(fileFilter);
         fileChooser.setFileFilter(fileFilter);
-        fileChooser.setSelectedFile(new File(record.getFilePath()));
+        fileChooser.setSelectedFile(new File("./.csv"));
         int result = fileChooser.showSaveDialog(mainPanel);
 
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -182,7 +182,7 @@ public class MainWindow extends JFrame {
             PrintWriter fOut = null;
             try {
                 fOut = new PrintWriter(fileToSave);
-
+                fOut.println(record.getRecordName());
                 for (int i = 0; i < data.length; i++) {
                     fOut.println(((double) i / (double) record.getSamplingFrequency()) + ", " + data[i] + ", " + markers[i]);
                 }
