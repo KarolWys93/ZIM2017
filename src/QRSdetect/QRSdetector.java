@@ -61,21 +61,38 @@ public class QRSdetector {
             toSample = qrsMarkers.length;
         }
 
+//        int lastMarkerIndex = fromSample;
+//
+//        for (int i = fromSample; i < toSample; i++) {
+//            if(qrsMarkers[i] != 0){
+//                int interval = i - lastMarkerIndex;
+//            }//       }
 
-        int lastMarkerIndex = 0;
-        double numOfMarkers = 0;
-        double intervalSum = 0;
+//        int lastMarkerIndex = fromSample;
+        int numOfMarkers = 0;
+        double interval = (toSample -fromSample)/samplingFreq;
 
-        for(int i = fromSample; i < toSample; i++){
+        for (int i = fromSample; i < toSample; i++){
             if(qrsMarkers[i] != 0){
-                intervalSum += i-lastMarkerIndex;
-                lastMarkerIndex = i;
                 numOfMarkers++;
             }
         }
 
-        double hrRate = ((intervalSum/numOfMarkers)*60)/samplingFreq;
-        return (int) hrRate;
+        return (int) ((numOfMarkers/interval)*60);
+//        double intervalSum = 0;
+
+//        for(int i = fromSample; i < toSample; i++){
+//            if(qrsMarkers[i] != 0){
+//                intervalSum += i-lastMarkerIndex;
+//                lastMarkerIndex = i;
+//                numOfMarkers++;
+//            }
+//        }
+//
+//        double meanInterval = intervalSum/numOfMarkers;
+//        meanInterval = meanInterval/samplingFreq;
+//        double hrRate = meanInterval*60;
+//        return (int) hrRate;
     }
 
     private int [] decisionFunction(double[] data){
